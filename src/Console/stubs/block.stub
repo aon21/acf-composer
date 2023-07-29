@@ -101,6 +101,7 @@ class DummyClass extends Block
         'color' => [
             'background' => true,
             'text' => true,
+            'gradients' => true,
         ],
     ];
 

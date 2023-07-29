@@ -6,6 +6,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Log1x\AcfComposer\Contracts\Block as BlockContract;
 use Log1x\AcfComposer\Concerns\InteractsWithBlade;
+use Log1x\AcfComposer\Helpers\CssFormatter;
 
 abstract class Block extends Composer implements BlockContract
 {
@@ -225,6 +226,30 @@ abstract class Block extends Composer implements BlockContract
     }
 
     /**
+     * Returns the active block inline styles based on the selected block properties.
+     *
+     * @return string
+     */
+    public function getInlineStyle(): string
+    {
+        return collect([
+            'padding' => !empty($this->block->style['spacing']['padding'])
+                ? collect($this->block->style['spacing']['padding'])->map(function ($value, $side) {
+                    return CssFormatter::formatCss($value, $side);
+                })->implode(' ')
+                : null,
+            'margin'  => !empty($this->block->style['spacing']['margin'])
+                ? collect($this->block->style['spacing']['margin'])->map(function ($value, $side) {
+                    return CssFormatter::formatCss($value, $side, 'margin');
+                })->implode(' ')
+                : null,
+            'color' => !empty($this->block->style['color']['gradient'])
+                ? sprintf('background: %s;', $this->block->style['color']['gradient'])
+                : null,
+        ])->filter()->implode(' ');
+    }
+
+    /**
      * Compose the defined field group and register it
      * with Advanced Custom Fields.
      *
@@ -346,7 +371,7 @@ abstract class Block extends Composer implements BlockContract
                 Str::start($this->block->align_content, 'is-position-') :
                 false,
             'full_height' => ! empty($this->supports['full_height'])
-                && ! empty($this->block->full_height) ?
+            && ! empty($this->block->full_height) ?
                 'full-height' :
                 false,
             'classes' => $this->block->className ?? false,
@@ -356,9 +381,14 @@ abstract class Block extends Composer implements BlockContract
             'textColor' => ! empty($this->block->textColor) ?
                 sprintf('has-%s-color', $this->block->textColor) :
                 false,
+            'gradient' => ! empty($this->block->gradient) ?
+                sprintf('has-%s-gradient-background', $this->block->gradient) :
+                false,
         ])->filter()->implode(' ');
 
         $this->style = $this->getStyle();
+
+        $this->inlineStyle = $this->getInlineStyle();
 
         return $this->view($this->view, ['block' => $this]);
     }
