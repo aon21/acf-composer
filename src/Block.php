@@ -203,6 +203,13 @@ abstract class Block extends Composer implements BlockContract
     public $example = [];
 
     /**
+     * The block dimensions.
+     *
+     * @var string
+     */
+    public $inlineStyle;
+
+    /**
      * Assets enqueued when rendering the block.
      *
      * @return void
