@@ -1,4 +1,11 @@
-<div class="{{ $block->classes }}" style="{{ $block->inlineStyle }}">
+<div class="{{ $block->classes }}"
+  @if (!empty($block->inlineStyle))
+    style="{{ $block->inlineStyle }}"
+  @endif
+  @if (!empty($block->anchor))
+    id="{{ $block->anchor }}"
+  @endif
+>
   @if ($items)
     <ul>
       @foreach ($items as $item)
