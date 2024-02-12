@@ -210,6 +210,13 @@ abstract class Block extends Composer implements BlockContract
     public $inlineStyle;
 
     /**
+     * The block anchor.
+     *
+     * @var string|null
+     */
+    public $anchor;
+
+    /**
      * Assets enqueued when rendering the block.
      *
      * @return void
@@ -397,6 +404,10 @@ abstract class Block extends Composer implements BlockContract
         $this->style = $this->getStyle();
 
         $this->inlineStyle = $this->getInlineStyle();
+
+        $this->anchor = !empty($this->block->anchor) ?
+            $this->block->anchor :
+            null;
 
         return $this->view($this->view, ['block' => $this]);
     }
